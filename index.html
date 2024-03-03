@@ -12,7 +12,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap"
       rel="stylesheet"
     />
     <title>Frontend quiz app</title>
@@ -20,50 +20,25 @@
   <body>
     <div class="wrapper">
       <section class="header">
-        <div class="topic-heeading">Topic</div>
+        <div class="topic-heading">Topic</div>
         <div class="theme">
           <img
             class="light-theme"
-            src="/public/images/icon-sun-dark.svg"
+            src="/public/assets/images/icon-sun-dark.svg"
             alt="light"
           />
           <input type="checkbox" id="toggle" />
           <label for="toggle" class="toggle-label"></label>
           <img
             class="dark-theme"
-            src="/public/images/icon-moon-dark.svg"
+            src="/public/assets/images/icon-moon-dark.svg"
             alt="dark"
           />
         </div>
       </section>
       <section class="content">
-        <div class="left">
-          <p>Welcome to the <strong>Frontend Quiz!</strong></p>
-          <p><em>Pick a subject to get started</em></p>
-        </div>
-        <div class="right">
-          <ul class="topics">
-            <li class="topic">
-              <img src="/public/images/icon-html.svg" alt="html-icon" />
-              HTML
-            </li>
-            <li class="topic">
-              <img src="/public/images/icon-css.svg" alt="css-icon" />
-              CSS
-            </li>
-            <li class="topic">
-              <img src="/public/images/icon-js.svg" alt="js-icon" />
-              JavaScript
-            </li>
-            <li class="topic">
-              <img
-                src="/public/images/icon-accessibility.svg"
-                alt="accessibility-icon"
-              />
-              Accessibility
-            </li>
-          </ul>
-        </div>
+        <div class="left"></div>
+        <div class="right"></div>
       </section>
     </div>
     <script type="module" src="./src/js/main.js"></script>
