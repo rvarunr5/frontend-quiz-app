@@ -12,6 +12,10 @@ class QuizData {
       };
     });
   }
+  getIconAndTitle(topic) {
+    const data = this.getDataFromTopic(topic)[0];
+    return { title: data.title, icon: data.icon };
+  }
   getDataFromTopic(topic) {
     return this.data.filter((item) => item["title"] === topic);
   }

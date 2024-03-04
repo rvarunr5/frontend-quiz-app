@@ -2,26 +2,37 @@ import "../css/style.css";
 import data from "../data/data.json" assert { type: "json" };
 import FrontEndQuiz from "./FrontendQuiz";
 import QuizData from "./QuizData";
-const leftElement = document.querySelector(".left");
+
+const LETTERS = ["A", "B", "C", "D"];
+const body = document.querySelector("body");
+const themeToggle = document.querySelector("#toggle");
+const lightThemeIcon = document.querySelector(".light-theme");
+const darkThemeIcon = document.querySelector(".dark-theme");
+const leftElement = document.querySelector(".left-content");
 const rightElement = document.querySelector(".right");
+const topicHeading = document.querySelector(".topic-heading");
+const progress = document.querySelector(".progress");
+const progressBar = document.querySelector(".progress-bar");
 
-const letters = ["A", "B", "C", "D"];
-
+const CORRECT_ANSWER = "correct";
+const WRONG_ANSWER = "incorrect";
 function resetPage() {
   leftElement.innerHTML = "";
   rightElement.innerHTML = "";
 }
-
-function serializeOption(option) {
+// Convert back the text to HTML
+function serializeText(option) {
   return option.replace("&lt;", /</g).replace("&gt;", />/g);
 }
 
-function parseOption(option) {
+// If the text contains HTML, converts to string
+function parseText(option) {
   return option.replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
 
 function buildHomeScreen() {
   const frontendQuiz = new QuizData(data.quizzes);
+  progressBar.style.display = "none";
   const topics = frontendQuiz.getTopics();
 
   leftElement.innerHTML += `<p class="heading">Welcome to the <strong>Frontend Quiz!</strong></p>`;
@@ -31,7 +42,9 @@ function buildHomeScreen() {
   topicsElement.innerHTML += topics
     .map((topic) => {
       return `<li class='topic item'>
-      <img src=${topic.icon} alt="icon" />
+      <img class='${topic.title.toLowerCase()} topic-icon' src=${
+        topic.icon
+      } alt="icon" />
       <span>${topic.title}</span>
     </li>`;
     })
@@ -41,6 +54,9 @@ function buildHomeScreen() {
   topicElement.forEach((tl) => {
     tl.addEventListener("click", (event) => {
       const topic = event.target.innerText;
+      const { title, icon } = frontendQuiz.getIconAndTitle(topic);
+
+      topicHeading.innerHTML += `<img src=${icon} alt="icon" class=${title.toLowerCase()} /><span>${title}</span>`;
       const data = frontendQuiz.getDataFromTopic(topic);
       startQuiz(data);
     });
@@ -48,10 +64,10 @@ function buildHomeScreen() {
 }
 
 function loadQuestion(question, questionNumber, totalQuestions) {
-  leftElement.innerHTML += `<p class='question-number'>Question ${
+  leftElement.innerHTML += `<p class='question-number'><em>Question ${
     questionNumber + 1
-  } of ${totalQuestions} </p>`;
-  leftElement.innerHTML += `<p class='question'>${parseOption(question)}</p>`;
+  } of ${totalQuestions}</em></p>`;
+  leftElement.innerHTML += `<p class='question'>${parseText(question)}</p>`;
 }
 
 function loadOptionsWithSubmit(options) {
@@ -61,8 +77,8 @@ function loadOptionsWithSubmit(options) {
   formElement.innerHTML += options
     .map((option, index) => {
       return `<div class='option item'>
-      <span class='letter'>${letters[index]}</span>
-      <span class='option-content'>${parseOption(option)}</span>
+      <span class='letter'>${LETTERS[index]}</span>
+      <span class='option-content'>${parseText(option)}</span>
     </div>`;
     })
     .join("");
@@ -71,7 +87,13 @@ function loadOptionsWithSubmit(options) {
 
 function startQuiz(topic) {
   resetPage();
+
   const frontendQuiz = new FrontEndQuiz(topic[0].questions);
+  progressBar.style.display = "inherit";
+  console.log(frontendQuiz.counter + 2, frontendQuiz.totalQuestions());
+  progress.style.width = `${
+    ((frontendQuiz.counter + 1) / frontendQuiz.totalQuestions()) * 100
+  }%`;
   questionWithOptions(frontendQuiz);
 }
 
@@ -96,14 +118,26 @@ function highlightSelected(element) {
     element.classList.toggle("active");
   });
 }
-
+function addIconToOption(element, type) {
+  const icon = type === "correct" ? "icon-correct" : "icon-wrong";
+  console.log(`<img src='/assets/images/'+${icon}+'.svg'`);
+  return (element.innerHTML += `<img src='/assets/images/icon-${type}.svg' alt='icon' />`);
+}
 function showCorrectAnswerIfWrong(answer) {
   const optionsElement = document.querySelectorAll(".option");
   optionsElement.forEach((optionElement) => {
     const text = optionElement.querySelector(".option-content").innerText;
     if (text === answer) {
       optionElement.classList.add("correct-answer");
+      addIconToOption(optionElement, CORRECT_ANSWER);
     }
+  });
+}
+
+function disableOptionsAfterSubmit() {
+  const topicElement = document.querySelectorAll(".option");
+  topicElement.forEach((topic) => {
+    topic.classList.add("disable");
   });
 }
 
@@ -113,27 +147,34 @@ function onAnswerSubmit(item, answer) {
     selectedAnswer.classList.remove("active");
     if (
       item.compareAnswers(
-        serializeOption(
+        serializeText(
           selectedAnswer.querySelector(".option-content").innerText
         ),
         answer
       )
-    )
+    ) {
       selectedAnswer.classList.add("correct-answer");
-    else {
+      addIconToOption(selectedAnswer, CORRECT_ANSWER);
+    } else {
       selectedAnswer.classList.add("wrong-answer");
+      addIconToOption(selectedAnswer, WRONG_ANSWER);
       showCorrectAnswerIfWrong(answer);
     }
   }
   this.innerHTML = "Next Question";
+  disableOptionsAfterSubmit();
   this.addEventListener("click", function (event) {
-    console.log("here", item.isDone(), item.getScore());
     if (!item.isDone()) {
       resetPage();
+
+      console.log(item.counter + 1, item.totalQuestions());
+      progress.style.width = `${
+        ((item.counter + 2) / item.totalQuestions()) * 100
+      }%`;
       item.incrementCounter();
       questionWithOptions(item);
     } else {
-      console.log("Quiz is complete!");
+      showScore(item);
     }
   });
 }
@@ -151,3 +192,24 @@ function submitAnswer(item, answer) {
 }
 
 buildHomeScreen();
+themeToggle.addEventListener("change", function () {
+  if (this.checked) {
+    leftElement.classList.add("dark");
+    leftElement.classList.remove("light");
+    body.style.backgroundImage =
+      'url("/assets/images/pattern-background-desktop-dark.svg")';
+    body.style.backgroundColor = "#303D50";
+    body.style.color = "#F4F6FA";
+    lightThemeIcon.setAttribute("src", "/assets/images/icon-sun-light.svg");
+    darkThemeIcon.setAttribute("src", "/assets/images/icon-moon-light.svg");
+  } else {
+    leftElement.classList.add("light");
+    leftElement.classList.remove("dark");
+    body.style.backgroundImage =
+      'url("/assets/images/pattern-background-desktop-light.svg")';
+    body.style.backgroundColor = "#F4F6FA";
+    body.style.color = "#303D50";
+    lightThemeIcon.setAttribute("src", "/assets/images/icon-sun-dark.svg");
+    darkThemeIcon.setAttribute("src", "/assets/images/icon-moon-dark.svg");
+  }
+});
