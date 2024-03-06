@@ -17,6 +17,7 @@
   --red-color: hsl(0, 82%, 63%);
   --pure-white-color: hsl(0, 0%, 100%);
   --20px: 1.25rem;
+  --24px: 1.5rem;
   --28px: 1.75rem;
   --36px: 2rem;
   --64px: 4rem;
@@ -90,6 +91,7 @@ img.javascript {
   gap: 1rem;
   font-size: var(--20px);
   font-weight: bold;
+  justify-content: center;
 }
 .topic-heading img {
   width: 40px;
@@ -240,7 +242,8 @@ img.javascript {
   flex-direction: column;
   gap: 1.5rem;
 }
-button.submit-answer {
+button.submit-answer,
+button.retake-button {
   border: none;
   background-color: var(--purple-color);
   color: var(--pure-white-color);
@@ -256,8 +259,33 @@ button.submit-answer {
   border-radius: 20px;
 }
 .progress {
-  /* width: 0%; */
   background-color: var(--purple-color);
   height: 5px;
   border-radius: 20px;
+}
+
+.score-card {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+.score-card-content {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  padding: 48px;
+  border: 1px solid var(--light-grey-color);
+  border-radius: 24px;
+  background-color: var(--pure-white-color);
+}
+.score-card-content .score {
+  font-size: var(--144px);
+  color: var(--dark-navy-color);
+}
+.score-card-content .helper {
+  font-size: var(--24px);
+  color: var(--grey-navy-color);
+}
+.text-lg {
+  font-size: var(--64px);
 }

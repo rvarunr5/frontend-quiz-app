@@ -90,7 +90,6 @@ function startQuiz(topic) {
 
   const frontendQuiz = new FrontEndQuiz(topic[0].questions);
   progressBar.style.display = "inherit";
-  console.log(frontendQuiz.counter + 2, frontendQuiz.totalQuestions());
   progress.style.width = `${
     ((frontendQuiz.counter + 1) / frontendQuiz.totalQuestions()) * 100
   }%`;
@@ -174,7 +173,7 @@ function onAnswerSubmit(item, answer) {
       item.incrementCounter();
       questionWithOptions(item);
     } else {
-      showScore(item);
+      result(item);
     }
   });
 }
@@ -189,6 +188,25 @@ function submitAnswer(item, answer) {
     event.preventDefault();
     onAnswerSubmit.call(this, item, answer);
   });
+}
+
+function result(item) {
+  resetPage();
+  progressBar.style.display = "none";
+  progress.style.display = "none";
+  leftElement.innerHTML += `<p class='text-lg'>Quiz completed</p>`;
+  leftElement.innerHTML += `<p class='text-lg'><strong>You scored....</strong></p>`;
+  rightElement.innerHTML += `
+  <div class='score-card'>
+    <div class='score-card-content'>
+      <div class='topic-heading'>
+        ${topicHeading.innerHTML}
+      </div>
+      <div class='score'>${item.score}</div>
+      <p class='helper'>out of ${item.totalQuestions()}</p>
+    </div>
+    <button class="retake-button item">Play Again</button>
+  </div>`;
 }
 
 buildHomeScreen();
