@@ -56,7 +56,7 @@ function buildHomeScreen() {
       const topic = event.target.innerText;
       const { title, icon } = frontendQuiz.getIconAndTitle(topic);
 
-      topicHeading.innerHTML += `<img src=${icon} alt="icon" class=${title.toLowerCase()} /><span>${title}</span>`;
+      topicHeading.innerHTML = `<img src=${icon} alt="icon" class=${title.toLowerCase()} /><span>${title}</span>`;
       const data = frontendQuiz.getDataFromTopic(topic);
       startQuiz(data);
     });
@@ -83,6 +83,7 @@ function loadOptionsWithSubmit(options) {
     })
     .join("");
   formElement.innerHTML += `<button class='submit-answer item'>Submit Answer</button>`;
+  formElement.innerHTML += `<div class='error'></div>`;
 }
 
 function startQuiz(topic) {
@@ -111,6 +112,8 @@ function questionWithOptions(frontendQuiz) {
 function highlightSelected(element) {
   element.addEventListener("click", (event) => {
     const activeElement = document.querySelector(".active");
+    const errorElement = document.querySelector(".error");
+    errorElement.innerHTML = "";
     if (activeElement && activeElement !== element) {
       activeElement.classList.remove("active");
     }
@@ -119,7 +122,6 @@ function highlightSelected(element) {
 }
 function addIconToOption(element, type) {
   const icon = type === "correct" ? "icon-correct" : "icon-wrong";
-  console.log(`<img src='/assets/images/'+${icon}+'.svg'`);
   return (element.innerHTML += `<img src='/assets/images/icon-${type}.svg' alt='icon' />`);
 }
 function showCorrectAnswerIfWrong(answer) {
@@ -142,6 +144,8 @@ function disableOptionsAfterSubmit() {
 
 function onAnswerSubmit(item, answer) {
   const selectedAnswer = document.querySelector(".active");
+
+  console.log(selectedAnswer);
   if (selectedAnswer) {
     selectedAnswer.classList.remove("active");
     if (
@@ -159,23 +163,27 @@ function onAnswerSubmit(item, answer) {
       addIconToOption(selectedAnswer, WRONG_ANSWER);
       showCorrectAnswerIfWrong(answer);
     }
-  }
-  this.innerHTML = "Next Question";
-  disableOptionsAfterSubmit();
-  this.addEventListener("click", function (event) {
-    if (!item.isDone()) {
-      resetPage();
 
-      console.log(item.counter + 1, item.totalQuestions());
-      progress.style.width = `${
-        ((item.counter + 2) / item.totalQuestions()) * 100
-      }%`;
-      item.incrementCounter();
-      questionWithOptions(item);
-    } else {
-      result(item);
-    }
-  });
+    this.innerHTML = "Next Question";
+    disableOptionsAfterSubmit();
+    this.addEventListener("click", function (event) {
+      if (!item.isDone()) {
+        resetPage();
+
+        console.log(item.counter + 1, item.totalQuestions());
+        progress.style.width = `${
+          ((item.counter + 2) / item.totalQuestions()) * 100
+        }%`;
+        item.incrementCounter();
+        questionWithOptions(item);
+      } else {
+        result(item);
+      }
+    });
+  } else {
+    const errorElement = document.querySelector(".error");
+    errorElement.innerHTML += `<img src="/assets/images/icon-incorrect.svg" /><span>Please select an answer</span>`;
+  }
 }
 
 function submitAnswer(item, answer) {
@@ -207,6 +215,12 @@ function result(item) {
     </div>
     <button class="retake-button item">Play Again</button>
   </div>`;
+
+  document.querySelector(".retake-button").addEventListener("click", playAgain);
+}
+function playAgain() {
+  resetPage();
+  buildHomeScreen();
 }
 
 buildHomeScreen();

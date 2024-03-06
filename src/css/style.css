@@ -109,7 +109,8 @@ img.javascript {
   gap: 2rem;
 }
 .left {
-  justify-content: space-around;
+  align-self: flex-start;
+  gap: 10rem;
 }
 .left-content > .heading {
   font-size: var(--64px);
@@ -253,7 +254,7 @@ button.retake-button {
 }
 
 .progress-bar {
-  width: 465px;
+  max-width: 400px;
   background-color: var(--pure-white-color);
   height: 5px;
   border-radius: 20px;
@@ -288,4 +289,27 @@ button.retake-button {
 }
 .text-lg {
   font-size: var(--64px);
+}
+.error {
+  color: var(--red-color);
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+@media (max-width: 50rem) {
+  .wrapper {
+    margin-top: 2rem;
+  }
+  .content {
+    flex-direction: column;
+    gap: 2rem;
+    margin-top: 2rem;
+  }
+  .left {
+    width: 100%;
+    gap: 2rem;
+  }
 }

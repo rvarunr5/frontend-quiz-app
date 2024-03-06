@@ -2,7 +2,9 @@ class QuizData {
   constructor(data) {
     this.data = data;
     this.topic = null;
+    this.newData = null;
   }
+
   getTopics() {
     return this.data.map((topic) => {
       const { title, icon } = topic;
